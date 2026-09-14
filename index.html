@@ -5,17 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#173766" />
 <title>Inscripción de áreas</title>
-<link rel="preload" href="assets/fondo.webp" as="image" fetchpriority="high">
-<link rel="preload" href="assets/logo_parroquia.webp" as="image">
-<link rel="preload" href="assets/logo_servicio_fe.webp" as="image">
+<link rel="preload" href="fondo.webp" as="image" fetchpriority="high">
+<link rel="preload" href="logo parroquia.webp" as="image">
+<link rel="preload" href="logo servicio fe.webp" as="image">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--navy:#153765;--navy2:#214a80;--gold:#e7b936;--ink:#18345f;--muted:#6e7f98;--line:#dfe6f0;--paper:#fff;--bg:#edf3f9;--danger:#b42318;}
 *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#14233f;background:#eaf1f8;}
 button,input,select{font:inherit} button{cursor:pointer}
-.page{min-height:100vh;position:relative;isolation:isolate;background:#eef4f9;overflow:hidden;}
-.page:before{content:"";position:absolute;inset:0;z-index:-2;background-image:url("assets/fondo.webp");background-size:cover;background-position:center 42%;background-repeat:no-repeat;opacity:.44;filter:saturate(.94) contrast(1.02);}
-.page:after{content:"";position:fixed;inset:0;z-index:-1;background:rgba(242,247,251,.44);backdrop-filter:blur(.25px);}
+.page{min-height:100vh;position:relative;overflow:hidden;background-image:linear-gradient(rgba(242,247,251,.46),rgba(242,247,251,.46)),url("fondo.webp");background-size:cover;background-position:center 42%;background-repeat:no-repeat;background-attachment:fixed;}
+.page:before,.page:after{content:none;}
 .page>main,.page>footer{position:relative;z-index:1;}
 .top-strip{background:linear-gradient(90deg,#173661,#173661 55%,#1e4478);color:#fff;min-height:94px;padding:20px 5vw;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;position:relative;overflow:hidden}
 .top-strip:after{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.045);right:-170px;top:-210px}
@@ -37,7 +36,7 @@ button,input,select{font:inherit} button{cursor:pointer}
 .modal-bg{position:fixed;inset:0;background:rgba(5,17,37,.68);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px;z-index:50} .modal-bg.show{display:flex} .modal{width:min(980px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.28)} .modal-head{position:sticky;top:0;z-index:4;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:16px 18px} .modal-head h3{margin:0;color:#183a69} .xbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:1.25rem} .modal-body{padding:20px} .login-box{max-width:430px;margin:0 auto} .muted{color:#74849a;font-size:.9rem} .btn{border:0;border-radius:10px;padding:11px 15px;font-weight:800} .btn-primary{width:100%;background:linear-gradient(90deg,#173b6f,#214a80);color:#fff} .btn-secondary{background:#eef3f8;color:#173b6f} .btn-danger{background:#fff1f0;color:#b42318;border:1px solid #fecaca}
 .admin-toolbar{display:grid;grid-template-columns:1fr 1fr 1.15fr auto auto;gap:8px;margin-bottom:14px} .admin-toolbar .input{margin:0;padding:10px} .stats{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px} .stat{border:1px solid var(--line);background:#f8fafc;border-radius:10px;padding:9px 12px;font-size:.88rem} .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px} table{width:100%;border-collapse:collapse;min-width:760px} th,td{padding:11px 12px;text-align:left;border-bottom:1px solid #e7ebf1;vertical-align:top;font-size:.88rem} th{background:#f6f8fb;color:#183a69} .tags{display:flex;gap:5px;flex-wrap:wrap} .tag{background:#edf2f8;color:#27496f;border-radius:999px;padding:4px 8px;font-size:.75rem} .empty{text-align:center;padding:30px;color:#7b8798}
 @media(max-width:780px){.top-strip{grid-template-columns:1fr 1fr;padding:14px 18px;min-height:84px}.top-strip .center-space{display:none}.top-quote{font-size:.78rem}.brand-stage{padding:10px 12px 10px}.brand-wrap{gap:12px}.logo-parish{width:112px;height:112px}.brand-divider{height:90px}.logo-service{width:min(260px,56vw)}.shell{margin-top:0;padding:18px 8px 24px}.card{padding:0 10px 18px;border-radius:20px}.kicker{font-size:.58rem;letter-spacing:.12em;gap:8px}.hero{padding-bottom:12px}.fields{grid-template-columns:1fr;padding-left:0}.area-row{grid-template-columns:28px 46px 1fr}.area-desc{grid-column:3;line-height:1.35}.area-title{align-self:end}.footer{grid-template-columns:1fr auto;gap:12px}.footer .sep{display:none}.footer-right{display:none}.admin-toolbar{grid-template-columns:1fr 1fr}.admin-toolbar>*:nth-child(3){grid-column:1/-1}}
-@media(max-width:480px){.top-quote.right{display:none}.top-strip{grid-template-columns:1fr;padding:14px 18px}.page:before{background-position:52% center;opacity:.38}.page:after{background:rgba(244,248,252,.56)}.brand-wrap{align-items:center}.logo-parish{width:86px;height:86px}.brand-divider{height:70px}.logo-service{width:58vw}.section{padding:13px 10px}.area-row{grid-template-columns:26px 42px 1fr;padding:9px 8px;gap:8px}.area-icon{width:40px;height:40px}.area-desc{font-size:.75rem}.footer{display:block;text-align:center}.admin-link{margin-left:0;margin-top:8px}}
+@media(max-width:480px){.top-quote.right{display:none}.top-strip{grid-template-columns:1fr;padding:14px 18px}.brand-wrap{align-items:center}.logo-parish{width:86px;height:86px}.brand-divider{height:70px}.logo-service{width:58vw}.section{padding:13px 10px}.area-row{grid-template-columns:26px 42px 1fr;padding:9px 8px;gap:8px}.area-icon{width:40px;height:40px}.area-desc{font-size:.75rem}.footer{display:block;text-align:center}.admin-link{margin-left:0;margin-top:8px}}
 </style>
 </head>
 <body>
@@ -50,8 +49,8 @@ button,input,select{font:inherit} button{cursor:pointer}
 
   <section class="brand-stage">
     <div class="brand-wrap">
-      <img class="logo-parish" decoding="async" fetchpriority="high" alt="Parroquia Castrense PNP Nuestra Señora de Chapi" src="assets/logo_parroquia.webp">
-      <img class="logo-service" decoding="async" fetchpriority="high" alt="Ser de Fe Vicio Castrense" src="assets/logo_servicio_fe.webp">
+      <img class="logo-parish" decoding="async" fetchpriority="high" alt="Parroquia Castrense PNP Nuestra Señora de Chapi" src="logo parroquia.webp">
+      <img class="logo-service" decoding="async" fetchpriority="high" alt="Ser de Fe Vicio Castrense" src="logo servicio fe.webp">
     </div>
   </section>
 
