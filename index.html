@@ -77,16 +77,16 @@ button,input,select{font:inherit} button{cursor:pointer}
         <section class="section">
           <div class="section-head">
             <div class="round-icon" aria-hidden="true">✓</div>
-            <div><h2>2. Áreas de servicio</h2><p>Puedes marcar más de una opción.</p></div>
+            <div><h2>2. Áreas de servicio</h2><p>Puedes marcar solo una opción.</p></div>
           </div>
           <div class="area-list">
-            <label class="area-row"><input type="checkbox" name="areas" value="Área de instrucción"><span class="area-icon">📖</span><span class="area-title">Área de instrucción</span><span class="area-desc">Encargada de preparar y desarrollar los temas que se impartirán durante las actividades.</span></label>
-            <label class="area-row"><input type="checkbox" name="areas" value="Música"><span class="area-icon">♫</span><span class="area-title">Música</span><span class="area-desc">Responsable de organizar y reproducir la música necesaria para cada momento de la actividad.</span></label>
-            <label class="area-row"><input type="checkbox" name="areas" value="Animación"><span class="area-icon">👥</span><span class="area-title">Animación</span><span class="area-desc">Encargada de realizar dinámicas, juegos y actividades que motiven e integren a los participantes.</span></label>
-            <label class="area-row"><input type="checkbox" name="areas" value="Infraestructura"><span class="area-icon">🔧</span><span class="area-title">Infraestructura</span><span class="area-desc">Responsable de preparar y acomodar el auditorio, incluyendo sillas y mesas.</span></label>
-            <label class="area-row"><input type="checkbox" name="areas" value="Ambientación"><span class="area-icon">✿</span><span class="area-title">Ambientación</span><span class="area-desc">Encargada de la decoración y de crear un ambiente adecuado de acuerdo con la actividad o temática.</span></label>
-            <label class="area-row"><input type="checkbox" name="areas" value="Área de acogida y orden"><span class="area-icon">🤝</span><span class="area-title">Área de acogida y orden</span><span class="area-desc">Responsable de recibir a los participantes, darles la bienvenida, orientarlos e indicarles dónde ubicarse.</span></label>
-            <label class="area-row"><input type="checkbox" name="areas" value="Secretaría"><span class="area-icon">📄</span><span class="area-title">Secretaría</span><span class="area-desc">Encargada del manejo de listas, registros, asistencia y demás información necesaria para la organización.</span></label>
+            <label class="area-row"><input type="radio" name="areas" value="Área de instrucción"><span class="area-icon">📖</span><span class="area-title">Área de instrucción</span><span class="area-desc">Encargada de preparar y desarrollar los temas que se impartirán durante las actividades.</span></label>
+            <label class="area-row"><input type="radio" name="areas" value="Música"><span class="area-icon">♫</span><span class="area-title">Música</span><span class="area-desc">Responsable de organizar y reproducir la música necesaria para cada momento de la actividad.</span></label>
+            <label class="area-row"><input type="radio" name="areas" value="Animación"><span class="area-icon">👥</span><span class="area-title">Animación</span><span class="area-desc">Encargada de realizar dinámicas, juegos y actividades que motiven e integren a los participantes.</span></label>
+            <label class="area-row"><input type="radio" name="areas" value="Infraestructura"><span class="area-icon">🔧</span><span class="area-title">Infraestructura</span><span class="area-desc">Responsable de preparar y acomodar el auditorio, incluyendo sillas y mesas.</span></label>
+            <label class="area-row"><input type="radio" name="areas" value="Ambientación"><span class="area-icon">✿</span><span class="area-title">Ambientación</span><span class="area-desc">Encargada de la decoración y de crear un ambiente adecuado de acuerdo con la actividad o temática.</span></label>
+            <label class="area-row"><input type="radio" name="areas" value="Área de acogida y orden"><span class="area-icon">🤝</span><span class="area-title">Área de acogida y orden</span><span class="area-desc">Responsable de recibir a los participantes, darles la bienvenida, orientarlos e indicarles dónde ubicarse.</span></label>
+            
           </div>
           <div style="margin-top:16px"><button id="submitBtn" class="submit" type="submit"><span class="btn-icon">➤</span>Enviar inscripción&nbsp;&nbsp;→</button><div id="formStatus" class="status"></div></div>
         </section>
@@ -117,7 +117,7 @@ button,input,select{font:inherit} button{cursor:pointer}
         <div class="admin-toolbar">
           <input id="filterNombre" class="input" type="search" placeholder="Filtrar por nombre">
           <input id="filterApellido" class="input" type="search" placeholder="Filtrar por apellido">
-          <select id="filterArea" class="input"><option value="">Todas las áreas</option><option>Área de instrucción</option><option>Música</option><option>Animación</option><option>Infraestructura</option><option>Ambientación</option><option>Área de acogida y orden</option><option>Secretaría</option></select>
+          <select id="filterArea" class="input"><option value="">Todas las áreas</option><option>Área de instrucción</option><option>Música</option><option>Animación</option><option>Infraestructura</option><option>Ambientación</option><option>Área de acogida y orden</option></select>
           <button id="exportBtn" class="btn btn-secondary" type="button">Exportar CSV</button>
           <button id="logoutBtn" class="btn btn-secondary" type="button">Salir</button>
         </div>
@@ -135,7 +135,7 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const form=document.getElementById('registrationForm'),formStatus=document.getElementById('formStatus'),submitBtn=document.getElementById('submitBtn');
 const checkboxes=[...document.querySelectorAll('input[name="areas"]')];
-checkboxes.forEach(cb=>cb.addEventListener('change',()=>cb.closest('.area-row').classList.toggle('checked',cb.checked)));
+checkboxes.forEach(cb=>cb.addEventListener('change',()=>{document.querySelectorAll('.area-row.checked').forEach(row=>row.classList.remove('checked'));if(cb.checked)cb.closest('.area-row').classList.add('checked');}));
 function showStatus(el,msg,type='success'){el.textContent=msg;el.className=`status show ${type}`;}
 
 form.addEventListener('submit',async e=>{
@@ -145,7 +145,7 @@ form.addEventListener('submit',async e=>{
   const apellido=document.getElementById('apellido').value.trim();
   const areas=checkboxes.filter(c=>c.checked).map(c=>c.value);
   if(!nombre||!apellido)return showStatus(formStatus,'Completa tu nombre y apellido.','error');
-  if(!areas.length)return showStatus(formStatus,'Marca al menos un área.','error');
+  if(!areas.length)return showStatus(formStatus,'Selecciona un área.','error');
   submitBtn.disabled=true;submitBtn.textContent='Enviando...';
   try{
     const{error}=await db.from('inscripciones_areas').insert({nombre,apellido,areas});
