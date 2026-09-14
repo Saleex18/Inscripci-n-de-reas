@@ -128,29 +128,121 @@ button,input,select{font:inherit} button{cursor:pointer}
 </div>
 
 <script>
-const SUPABASE_URL = "PON_AQUI_TU_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "PON_AQUI_TU_SUPABASE_ANON_KEY";
-const ADMIN_EMAIL = "PON_AQUI_TU_CORREO_ADMIN";
-const isConfigured=SUPABASE_URL.startsWith("https://")&&!SUPABASE_URL.includes("PON_AQUI")&&SUPABASE_ANON_KEY.length>40&&!SUPABASE_ANON_KEY.includes("PON_AQUI");
-const db=isConfigured?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+const SUPABASE_URL = "https://smizdwogscznptgacyor.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_ffgsRkPtXVHKSwdHPcvcFA_8FxDMRKH";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const form=document.getElementById('registrationForm'),formStatus=document.getElementById('formStatus'),submitBtn=document.getElementById('submitBtn');
 const checkboxes=[...document.querySelectorAll('input[name="areas"]')];
 checkboxes.forEach(cb=>cb.addEventListener('change',()=>cb.closest('.area-row').classList.toggle('checked',cb.checked)));
 function showStatus(el,msg,type='success'){el.textContent=msg;el.className=`status show ${type}`;}
-form.addEventListener('submit',async e=>{e.preventDefault();formStatus.className='status';const nombre=document.getElementById('nombre').value.trim(),apellido=document.getElementById('apellido').value.trim(),areas=checkboxes.filter(c=>c.checked).map(c=>c.value);if(!nombre||!apellido)return showStatus(formStatus,'Completa tu nombre y apellido.','error');if(!areas.length)return showStatus(formStatus,'Marca al menos un área.','error');if(!db)return showStatus(formStatus,'La nube todavía no está configurada. Falta conectar Supabase.','error');submitBtn.disabled=true;submitBtn.textContent='Enviando...';try{const{error}=await db.from('inscripciones_areas').insert({nombre,apellido,areas});if(error)throw error;form.reset();document.querySelectorAll('.area-row.checked').forEach(x=>x.classList.remove('checked'));showStatus(formStatus,'¡Inscripción registrada correctamente! Gracias por servir.','success')}catch(err){console.error(err);showStatus(formStatus,'No se pudo registrar. Verifica la conexión a la nube.','error')}finally{submitBtn.disabled=false;submitBtn.innerHTML='<span class="btn-icon">➤</span>Enviar inscripción&nbsp;&nbsp;→'}});
-const modal=document.getElementById('adminModal'),loginView=document.getElementById('loginView'),dashboardView=document.getElementById('dashboardView'),loginStatus=document.getElementById('loginStatus'),recordsBody=document.getElementById('recordsBody'),emptyState=document.getElementById('emptyState'),countRecords=document.getElementById('countRecords');let records=[];
-document.getElementById('openAdmin').addEventListener('click',async()=>{modal.classList.add('show');modal.setAttribute('aria-hidden','false');if(!db){loginView.style.display='block';dashboardView.style.display='none';return showStatus(loginStatus,'La nube aún no está configurada.','error')}const{data}=await db.auth.getSession();if(data.session)await showDashboard();else showLogin()});
-document.getElementById('closeAdmin').onclick=closeAdmin;modal.addEventListener('click',e=>{if(e.target===modal)closeAdmin()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))closeAdmin()});
-function closeAdmin(){modal.classList.remove('show');modal.setAttribute('aria-hidden','true')}function showLogin(){loginView.style.display='block';dashboardView.style.display='none';loginStatus.className='status'}async function showDashboard(){loginView.style.display='none';dashboardView.style.display='block';await loadRecords()}
-document.getElementById('loginBtn').addEventListener('click',async()=>{if(!db)return showStatus(loginStatus,'Supabase no está configurado.','error');const password=document.getElementById('adminPassword').value;if(!password)return showStatus(loginStatus,'Ingresa la contraseña.','error');if(!ADMIN_EMAIL||ADMIN_EMAIL.includes('PON_AQUI'))return showStatus(loginStatus,'Falta configurar el correo interno del administrador.','error');const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Ingresando...';const{error}=await db.auth.signInWithPassword({email:ADMIN_EMAIL,password});btn.disabled=false;btn.textContent='Ingresar';if(error)return showStatus(loginStatus,'Contraseña incorrecta.','error');document.getElementById('adminPassword').value='';await showDashboard()});
-document.getElementById('adminPassword').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()});document.getElementById('logoutBtn').addEventListener('click',async()=>{await db.auth.signOut();showLogin()});
-async function loadRecords(){const{data,error}=await db.from('inscripciones_areas').select('id,nombre,apellido,areas,created_at').order('created_at',{ascending:false});records=error?[]:(data||[]);renderRecords()}
-function renderRecords(){const fn=document.getElementById('filterNombre').value.trim().toLowerCase(),fa=document.getElementById('filterApellido').value.trim().toLowerCase(),area=document.getElementById('filterArea').value;const filtered=records.filter(r=>(!fn||r.nombre.toLowerCase().includes(fn))&&(!fa||r.apellido.toLowerCase().includes(fa))&&(!area||(r.areas||[]).includes(area)));countRecords.textContent=filtered.length;recordsBody.innerHTML='';emptyState.style.display=filtered.length?'none':'block';for(const r of filtered){const tr=document.createElement('tr');const date=new Date(r.created_at).toLocaleString('es-PE');tr.innerHTML=`<td>${escapeHtml(r.nombre)}</td><td>${escapeHtml(r.apellido)}</td><td><div class="tags">${(r.areas||[]).map(a=>`<span class="tag">${escapeHtml(a)}</span>`).join('')}</div></td><td>${date}</td><td><button class="btn btn-danger" data-delete="${r.id}">Eliminar</button></td>`;recordsBody.appendChild(tr)}document.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>deleteRecord(b.dataset.delete)))}
+
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  formStatus.className='status';
+  const nombre=document.getElementById('nombre').value.trim();
+  const apellido=document.getElementById('apellido').value.trim();
+  const areas=checkboxes.filter(c=>c.checked).map(c=>c.value);
+  if(!nombre||!apellido)return showStatus(formStatus,'Completa tu nombre y apellido.','error');
+  if(!areas.length)return showStatus(formStatus,'Marca al menos un área.','error');
+  submitBtn.disabled=true;submitBtn.textContent='Enviando...';
+  try{
+    const{error}=await db.from('inscripciones_areas').insert({nombre,apellido,areas});
+    if(error)throw error;
+    form.reset();
+    document.querySelectorAll('.area-row.checked').forEach(x=>x.classList.remove('checked'));
+    showStatus(formStatus,'¡Inscripción registrada correctamente! Gracias por servir.','success');
+  }catch(err){
+    console.error(err);
+    showStatus(formStatus,'No se pudo registrar. Revisa tu conexión a Internet e inténtalo nuevamente.','error');
+  }finally{
+    submitBtn.disabled=false;
+    submitBtn.innerHTML='<span class="btn-icon">➤</span>Enviar inscripción&nbsp;&nbsp;→';
+  }
+});
+
+const modal=document.getElementById('adminModal'),loginView=document.getElementById('loginView'),dashboardView=document.getElementById('dashboardView'),loginStatus=document.getElementById('loginStatus'),recordsBody=document.getElementById('recordsBody'),emptyState=document.getElementById('emptyState'),countRecords=document.getElementById('countRecords');
+let records=[];
+let adminPasswordSession='';
+
+document.getElementById('openAdmin').addEventListener('click',async()=>{
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  if(adminPasswordSession) await showDashboard(); else showLogin();
+});
+document.getElementById('closeAdmin').onclick=closeAdmin;
+modal.addEventListener('click',e=>{if(e.target===modal)closeAdmin()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))closeAdmin()});
+function closeAdmin(){modal.classList.remove('show');modal.setAttribute('aria-hidden','true')}
+function showLogin(){loginView.style.display='block';dashboardView.style.display='none';loginStatus.className='status'}
+async function showDashboard(){loginView.style.display='none';dashboardView.style.display='block';await loadRecords()}
+
+document.getElementById('loginBtn').addEventListener('click',async()=>{
+  const password=document.getElementById('adminPassword').value;
+  if(!password)return showStatus(loginStatus,'Ingresa la contraseña.','error');
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.textContent='Ingresando...';
+  try{
+    const{data,error}=await db.rpc('admin_list_inscripciones',{p_password:password});
+    if(error)throw error;
+    adminPasswordSession=password;
+    records=data||[];
+    document.getElementById('adminPassword').value='';
+    loginStatus.className='status';
+    loginView.style.display='none';dashboardView.style.display='block';
+    renderRecords();
+  }catch(err){
+    console.error(err);
+    showStatus(loginStatus,'Contraseña incorrecta.','error');
+  }finally{
+    btn.disabled=false;btn.textContent='Ingresar';
+  }
+});
+
+document.getElementById('adminPassword').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()});
+document.getElementById('logoutBtn').addEventListener('click',()=>{adminPasswordSession='';records=[];showLogin()});
+
+async function loadRecords(){
+  if(!adminPasswordSession)return;
+  const{data,error}=await db.rpc('admin_list_inscripciones',{p_password:adminPasswordSession});
+  if(error){adminPasswordSession='';showLogin();return showStatus(loginStatus,'La sesión de administrador terminó. Ingresa nuevamente.','error')}
+  records=data||[];
+  renderRecords();
+}
+
+function renderRecords(){
+  const fn=document.getElementById('filterNombre').value.trim().toLowerCase(),fa=document.getElementById('filterApellido').value.trim().toLowerCase(),area=document.getElementById('filterArea').value;
+  const filtered=records.filter(r=>(!fn||r.nombre.toLowerCase().includes(fn))&&(!fa||r.apellido.toLowerCase().includes(fa))&&(!area||(r.areas||[]).includes(area)));
+  countRecords.textContent=filtered.length;
+  recordsBody.innerHTML='';
+  emptyState.style.display=filtered.length?'none':'block';
+  for(const r of filtered){
+    const tr=document.createElement('tr');
+    const date=new Date(r.created_at).toLocaleString('es-PE');
+    tr.innerHTML=`<td>${escapeHtml(r.nombre)}</td><td>${escapeHtml(r.apellido)}</td><td><div class="tags">${(r.areas||[]).map(a=>`<span class="tag">${escapeHtml(a)}</span>`).join('')}</div></td><td>${date}</td><td><button class="btn btn-danger" data-delete="${r.id}">Eliminar</button></td>`;
+    recordsBody.appendChild(tr)
+  }
+  document.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>deleteRecord(b.dataset.delete)))
+}
+
 ['filterNombre','filterApellido','filterArea'].forEach(id=>document.getElementById(id).addEventListener('input',renderRecords));
-async function deleteRecord(id){if(!confirm('¿Eliminar este registro?'))return;const{error}=await db.from('inscripciones_areas').delete().eq('id',id);if(!error){records=records.filter(r=>String(r.id)!==String(id));renderRecords()}else alert('No se pudo eliminar el registro.')}
+
+async function deleteRecord(id){
+  if(!confirm('¿Eliminar este registro?'))return;
+  const{data,error}=await db.rpc('admin_delete_inscripcion',{p_password:adminPasswordSession,p_id:id});
+  if(!error&&data){records=records.filter(r=>String(r.id)!==String(id));renderRecords()}
+  else alert('No se pudo eliminar el registro.')
+}
+
 function escapeHtml(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
-document.getElementById('exportBtn').addEventListener('click',()=>{const fn=document.getElementById('filterNombre').value.trim().toLowerCase(),fa=document.getElementById('filterApellido').value.trim().toLowerCase(),area=document.getElementById('filterArea').value;const rows=records.filter(r=>(!fn||r.nombre.toLowerCase().includes(fn))&&(!fa||r.apellido.toLowerCase().includes(fa))&&(!area||(r.areas||[]).includes(area)));const csv=[['Nombre','Apellido','Áreas','Fecha'],...rows.map(r=>[r.nombre,r.apellido,(r.areas||[]).join(' | '),new Date(r.created_at).toLocaleString('es-PE')])].map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('
-');const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='inscripciones_areas.csv';a.click();URL.revokeObjectURL(url)});
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const fn=document.getElementById('filterNombre').value.trim().toLowerCase(),fa=document.getElementById('filterApellido').value.trim().toLowerCase(),area=document.getElementById('filterArea').value;
+  const rows=records.filter(r=>(!fn||r.nombre.toLowerCase().includes(fn))&&(!fa||r.apellido.toLowerCase().includes(fa))&&(!area||(r.areas||[]).includes(area)));
+  const csv=[['Nombre','Apellido','Áreas','Fecha'],...rows.map(r=>[r.nombre,r.apellido,(r.areas||[]).join(' | '),new Date(r.created_at).toLocaleString('es-PE')])].map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='inscripciones_areas.csv';a.click();URL.revokeObjectURL(url)
+});
 </script>
 </body>
 </html>
